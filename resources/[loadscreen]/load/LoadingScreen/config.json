@@ -1,0 +1,42 @@
+[
+	{
+		"useBackgroundColour" : "true",
+		"backgroundColour" : "20,20,20",
+		"useBackgroundImage" : "false",
+		"backgroundImagePath" : "images/backgroundImg7.jpg",
+		"useTextColour" : "false",
+		"textColour" : "f,f,f",
+		"useBoldText" : "false",
+		"serverTitle" : "Z.E.R.O RP Community",
+		"playAudioInBackground" : "true",
+		"audioPath" : "audio/gtavthemesong.ogg",
+		"audioVolume" : "0.5"
+	},
+	{
+		"rule1" : "En desarrollo",
+		"rule2" : "En desarrollo",
+		"rule3" : "En desarrollo",
+		"rule4" : "En desarrollo",
+		"rule5" : "En desarrollo",
+		"rule6" : "En desarrollo",
+		"rule7" : "En desarrollo"
+	},
+	{
+		"servers1" : "Website: www.endesarrollo.com",
+		"servers2" : "En desarrollo",
+		"servers3" : "Discord: http://discord.gg/Endesarrollo",
+		"servers4" : "",
+		"servers5" : "",
+		"servers6" : "",
+		"servers7" : ""
+	},
+	{
+		"content1" : "En desarrollo",
+		"content2" : "En desarrollo",
+		"content3" : "En desarrollo",
+		"content4" : "En desarrollo",
+		"content5" : "En desarrollo",
+		"content6" : "En desarrollo",
+		"content7" : "En desarrollo"
+	}
+]
