@@ -1,0 +1,188 @@
+<html>
+
+<head>
+	<title>Character Menus</title>
+	<link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'>
+	<link rel="stylesheet" href="libraries/vuetify.css">
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<v-app id="DRP_Characters">
+		<v-content>
+			<div id="DRP_SelectCharacter" v-show="showCharacterSelector">
+				<div id="DRP_Character_Base">
+					<div id="DRP_Character_Header">
+						<v-btn color="red" dark @click="showDisconnectQuestion = !showDisconnectQuestion">
+							<b>Desconectar</b>
+						</v-btn>
+						<v-btn color="green" dark @click="showCharacterCreator = !showCharacterCreator">
+							<b>Crear Personaje</b>
+						</v-btn>
+					</div>
+					<div id="DRP_Character_Body">
+						<v-container fluid>
+
+							<v-alert type="error" :value="characters.length <= 0">
+								No hay personajes creados
+							</v-alert>
+
+							<v-layout pa-1 row>
+								<v-flex xs6 v-for="(character, characterIndex) in characters" :key="characterIndex">
+									<v-card style="background-color: rgba(33, 32, 32, 0.7); border: 1px solid white;">
+										<v-card-title
+											style="font-weight: 200; font-size: 18px; justify-content: center; color: white;">
+											<b>{{ character.name }}</b>
+										</v-card-title>
+										<hr style="background-color: rgb(14, 204, 194)">
+										<v-card-text style="color: white;">
+											<b>Edad:</b> {{ character.age }}<br>
+											<b>Género:</b> {{ character.gender }}<br>
+											<br>
+											<br>
+											<b>Banco:</b> ${{ character.bank }}<br>
+											<b>Monedero:</b> ${{ character.cash }}<br>
+										</v-card-text>
+										<v-card-actions>
+											<v-btn color="green" block dark @click="SelectCharacter(characterIndex)">
+												Seleccionar Personaje</v-btn>
+											<v-btn color="red" block dark
+												@click="RequestDeleteCharacter(characterIndex)">
+												Borrar Este Personaje
+											</v-btn>
+									</v-card>
+								</v-flex>
+							</v-layout>
+						</v-container>
+
+						<v-dialog v-model="showCharacterDelete" scrollable persistent :overlay="false" max-width="370px"
+							transition="dialog-transition">
+							<v-card style="background-color: rgba(33, 32, 32, 1.0);">
+								<v-card-title style="justify-content: center; color: white;">
+									¿Estás seguro de querer borrar este personaje?
+								</v-card-title>
+								<v-card-text>
+									<v-container grid-list-xs>
+										<v-layout row>
+											<v-flex xs6>
+												<v-btn color="red" dark block @click="showCharacterDelete = false">No, ¡quiero volver!</v-btn>
+											</v-flex>
+											<v-flex xs6>
+												<v-btn color="green" dark block @click="DeleteCharacter()">Si, estoy seguro.
+												</v-btn>
+											</v-flex>
+										</v-layout>
+									</v-container>
+								</v-card-text>
+							</v-card>
+						</v-dialog>
+
+						<v-dialog v-model="showDisconnectQuestion" scrollable persistent :overlay="false"
+							max-width="370px" transition="dialog-transition">
+							<v-card style="background-color: rgba(33, 32, 32, 1.0);">
+								<v-card-title style="justify-content: center; color: white;">
+									¿Te quieres desconectar?
+								</v-card-title>
+								<v-card-text>
+									<v-container grid-list-xs>
+										<v-layout row>
+											<v-flex xs6>
+												<v-btn color="red" dark block @click="showDisconnectQuestion = false">
+													Cancelar</v-btn>
+											</v-flex>
+											<v-flex xs6>
+												<v-btn color="green" dark block @click="DisconectMe()">
+													¡Quiero desconectar!
+												</v-btn>
+											</v-flex>
+										</v-layout>
+									</v-container>
+								</v-card-text>
+							</v-card>
+						</v-dialog>
+
+						<v-dialog v-model="showCharacterSpawnMenu" scrollable persistent :overlay="false" max-width="900px"
+							transition="dialog-transition">
+							<v-content>
+								<div id="DRP_SpawnMenu_Base" v-show="showCharacterSpawnMenu">
+									<div id="DRP_SpawnMenu_Header">
+										Selección de localización
+									</div>
+									<div id="DRP_SpawnMenu_Body">
+										<v-container grid-list-xs>
+											<v-btn color="blue darken-1" block dark @click="GarageSpawnPreview(); selectedSpawnArea = 'LS Garage'">Garage Central</v-btn>
+											<v-btn color="blue darken-1" block dark @click="TrainStationPreview(); selectedSpawnArea = 'Train Station'">Estación de trenes</v-btn>
+											<v-btn color="green" block dark @click="SpawnLocation()">Entrar</v-btn>
+										</v-container>
+									</div>
+								</div>
+							</v-content>
+						</v-dialog>
+
+						<v-dialog v-model="showCharacterCreator" scrollable persistent :overlay="false"
+							max-width="900px" transition="dialog-transition">
+							<v-card style="background-color: rgba(33, 32, 32, 1.0);">
+								<v-card-title light style="font-size: 25px; justify-content: center; color: white;">
+									Formulario de Creación de Personaje
+								</v-card-title>
+								<hr>
+								<v-card-text>
+									<v-form ref="DRPCreatorForm">
+										<v-container grid-list-xs>
+											<v-layout row>
+												<v-text-field dark color="white" label="First Name"
+													v-model="selectedFirstname" :rules="nameRules">
+												</v-text-field>
+												<v-text-field dark color="white" label="Last Name"
+													v-model="selectedLastname" :rules="nameRules">
+												</v-text-field>
+											</v-layout>
+											<v-layout row>
+												<v-select dark :items="genders" v-model="selectedGender" label="Gender"
+													:rules="genderRules">
+												</v-select>
+											</v-layout>
+											<v-layout row>
+												<v-btn color="white" @click="selectedAge = selectedAge - 1">
+													<v-icon>arrow_left</v-icon>
+												</v-btn>
+												<v-slider dark color="white" ref="formSlider" v-model="selectedAge"
+													step="1" min="18" max="100"></v-slider>
+												<v-btn color="white" @click="selectedAge = selectedAge + 1">
+													<v-icon>arrow_right</v-icon>
+												</v-btn>
+												<v-text-field dark color="white" disabled v-model="selectedAge"
+													:rules="dobRules">
+												</v-text-field>
+											</v-layout>
+										</v-container>
+									</v-form>
+								</v-card-text>
+								<v-card-actions>
+									<v-layout row>
+										<v-btn color="green" dark block @click="CreateCharacter()">
+											<v-icon>check</v-icon>
+										</v-btn>
+										<v-btn color="red" dark block
+											@click="showCharacterCreator = !showCharacterCreator">
+											<v-icon>close</v-icon>
+										</v-btn>
+									</v-layout>
+								</v-card-actions>
+							</v-card>
+						</v-dialog>
+					</div>
+				</div>
+			</div>
+		</v-content>
+	</v-app>
+
+
+
+	<script src="libraries/axios.min.js"></script>
+	<script src="libraries/vue.min.js"></script>
+	<script src="libraries/vuetify.js"></script>
+	<script src="script.js"></script>
+</body>
+
+</html>
